@@ -2,6 +2,7 @@
 import Drawer from '../components/Drawer';
 import Service from './Service';
 import { Route, Switch } from 'react-router-dom';
+import Invoice from "./Invoice";
 
 
 function HomePage() {
@@ -12,9 +13,9 @@ function HomePage() {
       </div>
       <div className="container-right">
         <Route>
-            <Switch>
-               
+            <Switch>            
                 <Route exact path="/home/service" component={Service} />
+                <Route exact path="/home/invoice" component={Invoice} />
             </Switch>
         </Route>
        

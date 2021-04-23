@@ -86,10 +86,10 @@ function ResponsiveDrawer(props) {
             document.location.href = '/home/service';
             break;
         case 2:
-            document.location.href = '/invoice';
+            document.location.href = '/home/invoice';
             break;
         case 3:
-            document.location.href = '/information'
+            document.location.href = '/home/information'
             break;
     }
   }
