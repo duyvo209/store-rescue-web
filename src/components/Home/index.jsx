@@ -1,10 +1,3 @@
-// import React from 'react';
-
-// export default function Home () {
-//     return (
-//         <div></div>
-//     )
-// }
 
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -17,12 +10,12 @@ import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import HomeIcon from '@material-ui/icons/Home';
-import PersonIcon from '@material-ui/icons/Person';
 import DescriptionIcon from '@material-ui/icons/Description';
 import InfoIcon from '@material-ui/icons/Info';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import { AttachMoney, Navigation } from '@material-ui/icons';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -96,7 +89,10 @@ function ResponsiveDrawer(props) {
             document.location.href = '/invoice';
             break;
         case 3:
-            document.location.href = '/information'
+            document.location.href = '/information';
+            break;
+        case 4: 
+            document.location.href = '/revenue';
             break;
     }
   }
@@ -122,6 +118,10 @@ function ResponsiveDrawer(props) {
           <ListItemIcon><InfoIcon /></ListItemIcon>
           <ListItemText primary="Thông tin" />
         </ListItem>
+        <ListItem button key="Revenue" onClick={() => handleLink(4)}>
+          <ListItemIcon><AttachMoney /></ListItemIcon>
+          <ListItemText primary="Doanh thu" />
+        </ListItem>
         <ListItem button key="Logout" onClick={handleLogout}>
           <ListItemIcon><ExitToAppIcon /></ListItemIcon>
           <ListItemText primary="Đăng xuất" />
@@ -131,6 +131,31 @@ function ResponsiveDrawer(props) {
   );
 
   const container = window !== undefined ? () => window().document.body : undefined;
+
+  // const getData = async (uid) => {
+  //   console.log(uid);  
+  //   await db.collection('store').doc(uid).get().then((doc) => {
+  //       const data = doc.data()
+  //       console.log(data.name);
+  //   })
+  // }
+
+  // const authListener = () => {
+  //   auth.onAuthStateChanged((user) => {
+  //       if (user) {
+  //           getData(user.uid)
+  //           setUser(user);
+  //       } else {
+  //           setUser('');
+  //       }
+  //   });
+  // }
+
+  // React.useEffect(() => {
+  //   authListener();
+  // },[]);
+  
+  
 
   return (
     <div className={classes.root}>

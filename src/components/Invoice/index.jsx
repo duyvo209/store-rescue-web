@@ -46,11 +46,17 @@ const tableIcons = {
     const { useState, useEffect } = React;
 
     const [columns, setColumns] = useState([
-      { title: 'ID', field: 'id', editable: 'never'},
-      { title: 'Ngày đặt', field: 'time', render: rowData => rowData.time.toString().substring(0, 10)},
+      { title: 'Mã đơn', field: 'id', editable: 'never'},
+      { title: 'Ngày đặt', field: 'time', render: rowData => (new Date(rowData.time)).getDate()+'/'+((new Date(rowData.time)).getMonth()+1)+'/'+(new Date(rowData.time)).getFullYear()},
       { title: 'Khách hàng', field: 'user_info.name' },
-      { title: 'Tổng tiền', field: 'total' },
-
+      { title: 'Số điện thoại', field: 'user_info.phone' },
+      { title: 'Tổng tiền', field: 'total', render: rowData => <p>{rowData.total} VNĐ</p>},
+      // { title: 'Trạng thái', field: 'checkout', render: rowData => {
+      //     if (rowData.checkout == 1) {
+      //       return <p>Đã thanh toán</p>
+      //     }
+      // }}
+    
     ]);
 
     
@@ -58,8 +64,8 @@ const tableIcons = {
     const [user, setUser] = React.useState('');
 
     const getData = (uid) => {
-    //   console.log(uid);
-      db.collection('order').where('storeId', '==', uid).get().then( async snapshot => {
+    // console.log(uid);
+      db.collection('order').where('storeId', '==', uid).orderBy('time', 'desc').get().then( async snapshot => {
         const order = [];
         snapshot.forEach(doc => {
           const data = doc.data();
@@ -70,13 +76,13 @@ const tableIcons = {
           });
         });
         const newOrder = await order.map((item,index) => {
-          return {
+            
+            return {
             ...item,
-            id: index+1
+            id: item.uid,
           }
         })
-        setData(newOrder)
-        
+        setData(newOrder)       
       });
     }
   

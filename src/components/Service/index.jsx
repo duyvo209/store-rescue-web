@@ -70,6 +70,7 @@ const tableIcons = {
           });
         });
         const newService = await service.map((item,index) => {
+          console.log(item);
           return {
             ...item,
             id: index+1

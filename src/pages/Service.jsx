@@ -7,4 +7,5 @@ const Service = () => {
         </div>
     );
 };
- export default Service;
+
+export default Service;

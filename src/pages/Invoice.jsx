@@ -1,10 +1,11 @@
 import InvoiceComponents from '../components/Invoice';
 
-const Service = () => {
+const Invoice = () => {
     return (
         <div>
             <InvoiceComponents />
         </div>
     );
 };
- export default Service;
+
+export default Invoice;

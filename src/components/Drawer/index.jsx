@@ -16,6 +16,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuIcon from '@material-ui/icons/Menu';
+import { AttachMoney, Navigation } from '@material-ui/icons';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -66,10 +67,38 @@ function ResponsiveDrawer(props) {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const history = useHistory();
+  const [data, setData] = React.useState([]);
+  const [user, setUser] = React.useState('');
+  const [storeName, setStoreName] = React.useState([]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   }
+
+  const getData = (uid) => {
+    // console.log(uid);  
+    db.collection('store').doc(uid).get().then((doc) => {  
+        const data = doc.data().name
+        // console.log(data)
+        setStoreName([data])
+    })
+  
+  }
+
+  const authListener = () => {
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            getData(user.uid)
+            setUser(user);
+        } else {
+            setUser('');
+        }
+    });
+  }
+
+  React.useEffect(() => {
+    authListener();
+  },[]);
 
   const handleLogout = () => {
     auth.signOut();
@@ -80,16 +109,19 @@ function ResponsiveDrawer(props) {
   const handleLink = (index) => {
     switch(index) {
         case 0:
-            document.location.href = '/home';
+            document.location.href = '/home'
             break;
         case 1:
-            document.location.href = '/home/service';
+            document.location.href = '/home/service'
             break;
         case 2:
-            document.location.href = '/home/invoice';
+            document.location.href = '/home/invoice'
             break;
         case 3:
             document.location.href = '/home/information'
+            break;
+        case 4: 
+            document.location.href = '/home/revenue'
             break;
     }
   }
@@ -114,6 +146,10 @@ function ResponsiveDrawer(props) {
         <ListItem button key="Infor" onClick={() => handleLink(3)}>
           <ListItemIcon><InfoIcon /></ListItemIcon>
           <ListItemText primary="Thông tin" />
+        </ListItem>
+        <ListItem button key="Revenue" onClick={() => handleLink(4)}>
+          <ListItemIcon><AttachMoney /></ListItemIcon>
+          <ListItemText primary="Doanh thu" />
         </ListItem>
         <ListItem button key="Logout" onClick={handleLogout}>
           <ListItemIcon><ExitToAppIcon /></ListItemIcon>
@@ -140,7 +176,7 @@ function ResponsiveDrawer(props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            dvRescue
+            {storeName}
           </Typography>
         </Toolbar>
       </AppBar>
