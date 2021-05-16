@@ -22,7 +22,7 @@ function Revenue () {
     const classes1 = useStyles1();
     const [data, setData] = React.useState([]);
     const [user, setUser] = React.useState('');
-    const [date, setDate] = React.useState([]);
+    // const [date, setDate] = React.useState([]);
     const [label, setLabel] = React.useState([]);
     const [total, setTotal] = React.useState([]);
     const [labelDoughnut, setLabelDoughnut] = React.useState([]);
@@ -158,7 +158,7 @@ function Revenue () {
                 onChange={(e) => handleMonth(e)}
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={month } 
+                value={month} 
               >
                 <MenuItem value={1}>Tháng 1</MenuItem>
                 <MenuItem value={2}>Tháng 2</MenuItem>
@@ -182,60 +182,61 @@ function Revenue () {
         <div>
             <HandlerSelector />
             <br/> <br/> <br/>
-            <center>
-            <div style={{"height": "40%", "width": "40%"}}>
-                <Doughnut
-                    data={{
-                    labels: labelDoughnut,
-                    datasets: [
-                        {
-                            data: totalDoughnut,
-                            label: "Tổng tiền",
-                            backgroundColor: [
-                                "#3e95cd",
-                                "#8e5ea2",
-                                "#3cba9f",
-                                "#e8c3b9",
-                                "#c45850"
-                            ],      
+          
+            <div style={{ display: 'flex', 'flex-direction': 'row', height: 500, alignItems: 'flex-end'}}>
+                <div style={{ width: '32%', height: '100%'}}>
+                    <Doughnut
+                        data={{
+                        labels: labelDoughnut,
+                        datasets: [
+                            {
+                                data: totalDoughnut,
+                                label: "Tổng tiền",
+                                backgroundColor: [
+                                    "#3e95cd",
+                                    "#8e5ea2",
+                                    "#3cba9f",
+                                    "#e8c3b9",
+                                    "#c45850"
+                                ],      
+                            }
+                        ]
+                        }}
+                        option={{
+                        title: {
+                            display: true,
+                            text: "Predicted world population (millions) in 2050"
                         }
-                    ]
-                    }}
-                    option={{
-                    title: {
-                        display: true,
-                        text: "Predicted world population (millions) in 2050"
-                    }
-                    }}
-                />
+                        }}
+                    />
+                </div>
+                <div style={{ display: 'flex', 'flexGrow': 1}}/>
+                <div style={{width: '65%', height: '100%'}}>
+                    <Line
+                        data={{
+                            labels: label,
+                            datasets: [
+                                {
+                                data: total,
+                                label: "Tổng tiền",
+                                borderColor: "#3e95cd",
+                                fill: false,
+                                }
+                            ]
+                        }}
+                        options={{
+                            title: {
+                                display: true,
+                                text: "World population per region (in millions)"
+                            },
+                            legend: {
+                                display: true,
+                                position: "bottom"
+                            }
+                        }}
+                    />
+                </div>         
             </div>
-            </center>
-            
-            <br/> <br/> <br/> <br/> <br/>
-            <Line
-                data={{
-                labels: label,
-                datasets: [
-                    {
-                    data: total,
-                    label: "Tổng tiền",
-                    borderColor: "#3e95cd",
-                    fill: false,
-                    }
-                ]
-                }}
-                options={{
-                title: {
-                    display: true,
-                    text: "World population per region (in millions)"
-                },
-                legend: {
-                    display: true,
-                    position: "bottom"
-                }
-                }}
-            />
-            <br/> <br/> <br/>
         </div>
         
     );
