@@ -18,7 +18,21 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import { db, auth } from '../../firebase';
+import { makeStyles } from '@material-ui/core/styles';
+import firebase from 'firebase';
 
+import TextField from '@material-ui/core/TextField';
+
+import Button from '@material-ui/core/Button';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    '& > *': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
+  },
+}));
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -40,73 +54,88 @@ const tableIcons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
   };
 
-  
+  const useStyles1 = makeStyles((theme) => ({
+    root: {
+      '& > *': {
+        margin: theme.spacing(1),
+        width: '30ch',
+      },
+    },
+  }));  
 
   function ClassTable() {
     const { useState, useEffect } = React;
+    const classes = useStyles1();
 
     const [columns, setColumns] = useState([
       { title: 'ID', field: 'id', editable: 'never'},
-      { title: 'Tên dịch vụ', field: 'name' },
-      { title: 'Giá', field: 'price', render: rowData => <p>{rowData.price} VNĐ</p>},
-      { title: 'Mô tả', field: 'desc' },
+      { title: 'Từ (km)', field: 'from' },
+      { title: 'Đến (km)', field: 'to' },
+      { title: 'Giá', field: 'price', render: rowData => <p>{rowData.price} VNĐ</p> },
 
     ]);
 
     
     const [data, setData] = useState([]);
     const [user, setUser] = React.useState('');
-
-    const getListService = async() => {
-      var a = {}
-      await db.collection('services').get().then( async snapshot => {
-          const service = []
-          snapshot.forEach(doc => {
-              const data = doc.data()
-              const id = doc.id
-              a[id] = data.name 
-              console.log(data);
-              return data
-          })
-      })
-      setColumns([
-          { title: 'ID', field: 'id', editable: 'never'},
-          { title: 'Tên dịch vụ', field: 'service_id', lookup: a},
-          { title: 'Giá', field: 'price', render: rowData => <p>{rowData.price} VNĐ</p>},
-          { title: 'Mô tả', field: 'desc' },
-        ])
-    }
+    const [priceService, setPriceService] = useState(0);
 
     const getData = (uid) => {
       console.log(uid);
-      db.collection('store').doc(uid).collection('service').get().then( async snapshot => {
+      db.collection('store').doc(uid).collection('prices_move').orderBy('from', 'asc').get().then( async snapshot => {
         const service = [];
         snapshot.forEach(doc => {
           const data = doc.data();
           const id = doc.id;
           service.push({
             ...data,
-            uid: id
+            id: id
           });
         });
         const newService = await service.map((item,index) => {
           console.log(item);
           return {
             ...item,
-            id: index+1
+            id: index+1,
+            idFee: item.id,
           }
         })
         setData(newService)
         
       });
     }
+
+    const getPriceService = async(uid) => {
+      await db.collection('store').doc(uid).get().then( async doc => {
+        const service = []   
+            const data = doc.data().price_service
+            const id = doc.id        
+            console.log(data);
+            setPriceService(data)
+            return data
+        // const newPriceService = await priceService.map((item) => {
+        //   return {
+        //     ...item,
+        //     id: item.id
+        //   }
+        // })
+        // setPriceService(newPriceService)
+      })
+    }
+
+    const addPriceService = async(uid,priceServiceForm) => {
+      console.log(uid,priceServiceForm);
+      await db.collection('store').doc(uid).update({
+        'price_service':Number(priceServiceForm/100)
+      })
+    }
   
     const authListener = () => {
       auth.onAuthStateChanged((user) => {
           if (user) {
               getData(user.uid)
+              getPriceService(user.uid)
               setUser(user);
-              getListService(user)
           } else {
               setUser('');
           }
@@ -116,12 +145,29 @@ const tableIcons = {
     React.useEffect(() => {
       authListener();
     },[]);
-    
+
+    const HandlerService = () => {  
+      return(
+        <div>
+          <form className={classes.root} onSubmit={(even)=>{
+                even.preventDefault()
+                addPriceService(user.uid,Number(even.target.haha.value))
+          }}  >
+            <TextField  name='haha' id="outlined-basic" label="Phí dịch vụ (theo %)" variant="outlined"  defaultValue={priceService ? priceService*100 : 0} />
+            <br/>
+            <Button variant="contained" type='submit' color="primary">Lưu thay đổi</Button>
+          </form>
+        </div>
+      );
+    }
    
     return (
+    <>
+      <HandlerService />
+      <br />
       <MaterialTable
         icons={tableIcons}
-        title="Quản lý dịch vụ"
+        title="Phí di chuyển"
         columns={columns}
         data={data}
         editable={{
@@ -129,10 +175,10 @@ const tableIcons = {
             new Promise((resolve, reject) => {
               setTimeout(() => {
                 setData([...data, newData]);
-                db.collection('store').doc(auth.currentUser.uid).collection('service').add({
-                  'service_id': newData.service_id,
+                db.collection('store').doc(auth.currentUser.uid).collection('prices_move').add({
+                  'from': Number(newData.from),
+                  'to': Number(newData.to),
                   'price': newData.price,
-                  'desc': newData.desc,
                 });
                 resolve();
               }, 1000)
@@ -144,10 +190,14 @@ const tableIcons = {
                 const index = oldData.tableData.id;
                 dataUpdate[index] = newData;
                 setData([...dataUpdate]);
-                db.collection('store').doc(auth.currentUser.uid).collection('service').doc(newData.uid).update({
+               
+                db.collection('store').doc(auth.currentUser.uid).collection('prices_move').doc(newData.idFee).update({
+                  'from': Number(newData.from),
+                  'to': Number(newData.to),
                   'price': newData.price,
-                  'desc': newData.desc,
                 });
+                  console.log(auth.currentUser.uid)
+                  console.log(newData.idFee)
                 resolve();
               }, 1000)
             }),
@@ -159,13 +209,14 @@ const tableIcons = {
                 dataDelete.splice(index, 1);
                 setData([...dataDelete]);
                   console.log(oldData.uid);
-                db.collection('store').doc(auth.currentUser.uid).collection('service').doc(oldData.uid).delete();
+                db.collection('store').doc(auth.currentUser.uid).collection('prices_move').doc(oldData.idFee).delete();
                 
                 resolve()
               }, 1000)
             }),
         }}
       />
+    </>
     )
   }
   

@@ -94,6 +94,9 @@ function ResponsiveDrawer(props) {
         case 4: 
             document.location.href = '/revenue';
             break;
+        case 5: 
+            document.location.href = '/fee';
+            break;
     }
   }
 
@@ -109,6 +112,10 @@ function ResponsiveDrawer(props) {
         <ListItem button key="Service" onClick={() => handleLink(1)}>
           <ListItemIcon><MenuIcon /></ListItemIcon>
           <ListItemText primary="Dịch vụ" />
+        </ListItem>
+        <ListItem button key="Fee" onClick={() => handleLink(5)}>
+          <ListItemIcon><MenuIcon /></ListItemIcon>
+          <ListItemText primary="Phí phát sinh" />
         </ListItem>
         <ListItem button key="Invoice" onClick={() => handleLink(2)}>
           <ListItemIcon><DescriptionIcon /></ListItemIcon>

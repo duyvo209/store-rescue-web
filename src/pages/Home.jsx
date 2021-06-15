@@ -4,7 +4,7 @@ import Service from './Service';
 import { Route, Switch } from 'react-router-dom';
 import Invoice from "./Invoice";
 import Revenue from '../components/Revenue';
-
+import FeeMove from './FeeMove';
 
 function HomePage() {
   return (
@@ -16,6 +16,7 @@ function HomePage() {
         <Route>
             <Switch>            
                 <Route exact path="/home/service" component={Service} />
+                <Route exact path="/home/fee" component={FeeMove} />
                 <Route exact path="/home/invoice" component={Invoice} />
                 <Route exact path="/home/revenue" component={Revenue} />
             </Switch>
